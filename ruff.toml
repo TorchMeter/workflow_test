@@ -1,7 +1,7 @@
 # See https://docs.astral.sh/ruff/settings for help
 
-target-version = "py37" # Always generate Python 3.6-compatible code.
-line-length = 120 # Allow lines to be as long as 120.
+target-version = "py38" # Always generate Python 3.6-compatible code.
+line-length = 250 # Allow lines to be as long as 120.
 
 [format]
 docstring-code-format = true # Enable reformatting of code snippets in docstrings.
@@ -15,6 +15,7 @@ ignore = [
     "C901",    # function is too complex (12 > 10)
     "COM812",  # Trailing comma missing
     "D",       # Docstring rules
+    "E731",    # Allow lambda expressions
     "EM101",   # Exception must not use a string literal, assign to variable first
     "EM102",   # Exception must not use an f-string literal, assign to variable first
     "ERA001",  # Found commented-out code
@@ -43,6 +44,6 @@ ignore = [
 [lint.isort]
 length-sort = true # sort imports by their string length
 combine-as-imports = true
-known-first-party = ["<your_package_name>"]
+known-first-party = ["torchmeter"]
 lines-after-imports = 1 # Use a single line after each import block.
 single-line-exclusions = ["os", "json", "re"]

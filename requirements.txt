@@ -1,7 +1,9 @@
-setuptools>=51.0.0
-importlib-metadata
-isort
-ruff
-typer
-tqdm
 rich
+tqdm
+torch
+torchvision
+xlsxwriter
+polars >= 1.8.2
+numpy
+pyyaml
+pympler

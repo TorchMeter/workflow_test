@@ -1,0 +1,57 @@
+# TorchMeter, MIT license
+# Author: Ahzyuan
+# Repo: https://github.com/Ahzyuan/torchmeter
+
+name: ✅ TorchMeter Test ❌
+
+on:
+  pull_request: 
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  workflow_dispatch:
+
+env:
+  FORCE_COLOR: 1 
+
+jobs:
+  Compatibility-Test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - name: Fetch code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: setup.cfg
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ".[test]"
+
+      - name: Run tests
+        run: pytest -q
+
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+
+      - name: Install Ruff
+        run: pipx install ruff
+
+      - name: Lint code with Ruff
+        run: ruff check --output-format=github --target-version=py39
+        
+      - name: Check code formatting with Ruff
+        run: ruff format --diff --target-version=py39
+        continue-on-error: true
