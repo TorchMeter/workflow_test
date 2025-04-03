@@ -66,7 +66,6 @@ jobs:
           python3 -m pip install ruff>=0.6.0
 
       - name: Lint Code with Ruff
-        continue-on-error: true
         run: |
           ruff check \
             # --fix \
@@ -74,12 +73,13 @@ jobs:
             --preview \
             --target-version=py38 \
             --output-format=grouped \
-            --output-file=ruff_lint_output.log
+            --output-file=ruff_lint_output.log \
+            || lint_exit_code=$? 
 
           echo -e "\n📋 Linter Output:"
           cat ruff_lint_output.log
           
-          if [[ $? -eq 0 ]]; then
+          if [[ ${lint_exit_code:-0} -eq 0 ]]; then
             echo -e "\n✅ Linting passed! Code quality check successful! 🎉"
           else
             echo -e "\n❌ Linting failed! Some code does not meet the linting rules!" >&2
@@ -99,7 +99,6 @@ jobs:
 
       - name: Format Code with Ruff
         id: ruff-format
-        continue-on-error: true
         run: |
           set -o pipefail
 
@@ -107,10 +106,11 @@ jobs:
           ruff format \
             --diff \
             --preview \
-            --target-version=py38 | tee ruff_format_diff.log  
+            --target-version=py38 | tee ruff_format_diff.log \
+            || format_exit_code=$?  
           # ruff format --preview --target-version=py38
 
-          if [[ $? -eq 0 ]]; then
+          if [[ ${format_exit_code:-0} -eq 0 ]]; then
             echo -e "\n✅ Formatting passed! All code is well-formated! 🎉"
           else
             echo -e "\n❌ Formatting failed! Some code does not meet the format requirements!" >&2
