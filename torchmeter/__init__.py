@@ -19,4 +19,5 @@ __version__ = "0.1.0"
 from torchmeter.core import Meter
 from torchmeter.config import get_config
 
-__all__ = ["Meter", "get_config"]
+__all__ = ["Meter", 
+           "get_config"]
