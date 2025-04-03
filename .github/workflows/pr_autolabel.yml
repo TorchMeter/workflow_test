@@ -27,6 +27,7 @@ jobs:
   labeler:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Check PR Title
         uses: thehanimo/pr-title-checker@v1.4.2
         with:
