@@ -207,6 +207,10 @@ jobs:
     name: 🧹 Cleanup Tag on Failure
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      pull-requests: write
+      
     needs: 
       - Check-Tag
       - Build-Distribution-Packages
