@@ -1,0 +1,168 @@
+# TorchMeter, MIT license
+# Author: Ahzyuan
+# Repo: https://github.com/Ahzyuan/torchmeter
+
+# This template is borrowed from polars and modified
+# polars official one: https://github.com/pola-rs/polars/blob/main/.github/release-drafter.yml
+# thanks to @pola-rs's great job
+
+# version identification and calculation
+## when the corresponding label exists in a PR, the semantic version number will be increased
+version-resolver:
+  major:
+    labels:
+      - break
+      - breaking
+
+  minor:
+    labels:
+      - feat
+      - performance
+
+  patch:
+    labels:
+      - deprecation
+      - bug-fix
+      - refactor
+      - maintain
+      - revert
+      - misc
+      - tests
+      # - docs
+
+  default: patch
+
+# release title
+name-template: 'TorchMeter v$RESOLVED_VERSION 🌈'
+
+# the format of tag to be linked by the release
+tag-template: 'v$RESOLVED_VERSION'
+
+# release body
+## global limitations
+replacers:
+  ## Remove conventional commits from titles
+  - search: '/- (build|chore|ci|depr|docs|feat|fix|perf|refactor|release|test)(\(.*\))?(\!)?\: /g'
+    replace: '- '
+
+## change list related
+### content of each PR item in change list
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+
+## contributors related
+no-contributors-template: ""
+
+# PR categories (the change list is made up of all PRs between two releases)
+## all PRs with labels not in `exclude-labels` will be categorized in a section titled `title` in change list
+exclude-labels:
+  - skip-changelog
+  - PR-title-needs-formatting
+
+categories:
+  - title: 💥 Breaking changes
+    collapse-after: 50
+    labels: breaking
+
+  - title: 🗑️ Deprecations
+    collapse-after: 20
+    labels: deprecation
+
+  - title: ⚡ Performance Boost
+    collapse-after: 50
+    labels: performance
+  
+  - title: 🌟 New Features
+    collapse-after: 50
+    labels: feat
+
+  - title: 🐞 Bug fixes
+    collapse-after: 30
+    labels: bug-fix
+      
+  - title: 📖 Documentation
+    collapse-after: 10
+    labels: docs 
+  
+  - title: 🧪 Tests
+    collapse-after: 20
+    labels: tests
+
+  - title: 🧰 Maintenance
+    collapse-after: 20
+    labels: maintain
+
+  - title: 🏗 Refactor
+    collapse-after: 20
+    labels: refactor
+
+  - title: ↩️ Reverts
+    collapse-after: 10
+    labels: revert
+  
+  - title: 🧩 Others
+    collapse-after: 10
+    labels: misc
+
+## auto label PR with its title pattern use regex
+### Note: it's recommended to enable branch protection and only allow branch updates through pull requests (PRs), 
+### so that the change list can contain as comprehensive change information as possible. Another suggestion is to use 
+### the PR title as merge commit message, so that the PR title can be used as the changelog item title. 
+### See https://github.com/marketplace/actions/conventional-commit-in-pull-requests#configuring-squash-merging
+autolabeler:
+  - label: breaking
+    title:
+      - '/^(break|breaking)/i'
+      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\s?\: /i' # Example: feat!: ...
+
+  - label: deprecation
+    title:
+      - '/^depr/i'
+
+  - label: performance
+    title:
+      - '/^perf/i'
+
+  - label: feat
+    title:
+      - '/^feat/i' 
+
+  - label: bug-fix
+    title:
+      - '/^fix/i'
+
+  - label: docs
+    title:
+      - '/^doc/i'
+  
+  - label: tests
+    title:
+      - '/^test/i'
+  
+  - label: maintain
+    title:
+      - '/^chore/i'
+      - '/^maintain/i'
+
+  - label: refactor
+    title:
+      - '/^refactor/i'
+
+  - label: revert
+    title:
+      - '/^revert/i'
+  
+  - label: misc
+    title:
+      - '/^(?!break|breaking|depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert).+/i'
+
+## layout
+template: |
+  $CHANGES
+
+  ## 🌟 Acknowledgements
+  > 🍻 Special thanks to all our contributors!
+  > 😊 Your contributions make `TorchMeter` better for everyone! 
+
+  $CONTRIBUTORS
+  
