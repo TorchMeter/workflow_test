@@ -1,5 +1,7 @@
 # TorchMeter
 
+Test inline badge: <!-- Coverage Badge:Begin --><!-- Coverage Badge:End -->
+
 Welcome to `Torchmeter` ⏲️ !!!
 
 `Torchmeter` is an **all-in-one** tool for Pytorch model analysis 🚀🚀🚀, 
