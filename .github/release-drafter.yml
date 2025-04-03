@@ -51,7 +51,7 @@ change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 
 ## contributors related
-no-contributors-template: ""
+no-contributors-template: "Looking forward to your contributions!"
 
 # PR categories (the change list is made up of all PRs between two releases)
 ## all PRs with labels not in `exclude-labels` will be categorized in a section titled `title` in change list
@@ -113,7 +113,7 @@ autolabeler:
   - label: breaking
     title:
       - '/^(break|breaking)/i'
-      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\s?\: /i' # Example: feat!: ...
+      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\: /i' # Example: feat!: ...
 
   - label: deprecation
     title:
