@@ -113,7 +113,7 @@ autolabeler:
   - label: breaking
     title:
       - '/^(break|breaking)/i'
-      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\s?\: /i' # Example: feat!: ...
+      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\: /i' # Example: feat!: ...
 
   - label: deprecation
     title:
