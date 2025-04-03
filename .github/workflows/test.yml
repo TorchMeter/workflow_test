@@ -64,16 +64,11 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install ruff>=0.6.0
+          ruff version
 
       - name: Lint Code with Ruff
         run: |
-          set +e
-
-          ruff version
-
           ruff check \
-            # --fix \
-            # --unsafe-fixes \
             --preview \
             --target-version=py38 \
             --output-format=grouped \
@@ -103,10 +98,8 @@ jobs:
       - name: Format Code with Ruff
         id: ruff-format
         run: |
-          set +e
           set -o pipefail
 
-          echo -e "\n📋 Formater Output:"
           ruff format \
             --diff \
             --preview \
