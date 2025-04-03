@@ -219,6 +219,9 @@ jobs:
       (${{ failure() }} || ${{ cancelled() }})
 
     steps:
+      - name: Fetch Code
+        uses: actions/checkout@v4
+
       - name: Delete Tag on Failure
         uses: prompt/actions-delete-tag@v1
       
