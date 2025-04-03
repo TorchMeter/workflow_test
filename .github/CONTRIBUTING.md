@@ -51,6 +51,15 @@
         - Test methods, steps and results
         - Other information, such as screenshots, logs, etc.
 
+        **为确保自动化流程能正常更新测试徽章，请在创建PR时务必：**
+
+        1. 勾选 `Allow edits and access to secrets by maintainers` 选项（位于PR创建页面底部
+        
+        > 🔍 这个设置允许我们：
+        > - ✅ 通过CI自动更新PR分支的README徽章
+        > - ✅ 确保工作流能正确推送覆盖率更新
+        > - 🔒 不会获取你的仓库敏感信息（secrets仅对主仓库有效）
+
 ## 🧐 Code review
 
    - **All PRs will go through code review**. Other developers may offer suggestions and feedback to improve the quality of the code.

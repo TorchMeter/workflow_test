@@ -1,0 +1,79 @@
+# TorchMeter, MIT license
+# Author: Ahzyuan
+# Repo: https://github.com/Ahzyuan/torchmeter
+
+# This workflow is triggered manually with target PR number as input.
+# 
+# Trigger Conditions  
+#   - Manually triggered
+#   - Runs only on repositories: `Ahzyuan/torchmeter` or `Ahzyuan/workflow_test`  
+#
+# Core functions: 
+# 1. Checks out target PR context, updates coverage badge in README.md and push the change to PR history
+
+name: 🌟 Update README Badge 🔰
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Target PR Number'
+        required: true
+        type: number
+
+permissions:
+  contents: write
+
+jobs:
+  Coverage-Badge:
+    name: 🪄 Update Coverage Badge
+    runs-on: ubuntu-latest
+
+    if: github.repository == 'TorchMeter/workflow_test'
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Checkout PR
+        uses: dawidd6/action-checkout-pr@v1.2.0
+        with:
+          pr: ${{ github.event.inputs.pr_number }}
+
+      - name: Download Test Report
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: test.yml
+          workflow_search: false
+          workflow_conclusion: success
+          branch: ${{ github.ref_name }}
+          event: pull_request
+          name: coverage-report-ubuntu-3.8
+          name_is_regexp: false
+          search_artifacts: true
+          if_no_artifact_found: fail
+          allow_forks: false
+
+      - name: Generate Coverage Badge Link
+        uses: MishaKav/pytest-coverage-comment@v1
+        id: coverage-badge-generate
+        with:
+          hide-comment: true
+          pytest-xml-coverage-path: coverage-ubuntu-3.8.xml
+
+      - name: Update README
+        run: |
+          perl -0777 -i -pe "
+            BEGIN { $coverage = shift }
+            s|<!-- Coverage Badge:Begin -->.*?<!-- Coverage Badge:End -->|<!-- Coverage Badge:Begin -->$coverage<!-- Coverage Badge:End -->|s
+          " "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" README.md
+
+      - name: Commit & Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update coverage badge in README"
+          git push
