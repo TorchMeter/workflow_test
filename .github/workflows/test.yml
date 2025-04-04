@@ -169,17 +169,11 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          if [[ "${{ matrix.os }}" == *"windows"* ]]; then
-            pytest -q \
-            --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
-            --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
-            | Tee-Object -FilePath pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
-          else
-            pytest -q \
-            --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
-            --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
-            | tee pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
-          fi
+          
+          pytest -q \
+          --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
+          --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
+          | tee pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
 
       - name: Upload Pytest Report
         if: always()
