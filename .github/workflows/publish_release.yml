@@ -187,16 +187,16 @@ jobs:
               🥳 <strong style="color: #2ea043;">Congratulation! Version ${{ github.ref_name }} Launched</strong> 🥳
               <hr style="border: 0; border-top: 1px solid #e1e4e8;">
               
-              <strong>Release Details</strong>
-              ▸ 🕗 Time: ${{ github.event.head_commit.timestamp }}
-              ▸ 🏷️ Version: <code>${{ github.ref_name }}</code>
-              ▸ 🎁 <a href="https://pypi.org/project/torchmeter/${{ github.ref_name }}/">PyPI Package</a>
+              <strong>Release Details</strong><br>
+              ▸ 🕗 Time: ${{ github.event.head_commit.timestamp }}<br>
+              ▸ 🏷️ Version: <code>${{ github.ref_name }}</code><br>
+              ▸ 🎁 <a href="https://pypi.org/project/torchmeter/${{ github.ref_name }}/">PyPI Package</a><br>
               ▸ 📦 <a href="https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}">Github Release</a>
 
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
               
-              <strong>Quick Links</strong>
-              ▸ 🚀 <a href="https://github.com/${{ github.repository }}">Repository Home</a>
+              <strong>Quick Links</strong><br>
+              ▸ 🚀 <a href="https://github.com/${{ github.repository }}">Repository Home</a><br>
               ▸ ⚙️ <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">Workflow Run</a>
 
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
@@ -243,21 +243,23 @@ jobs:
 
               ▸ Repo: <a href="https://github.com/${{github.repository}}">${{github.repository}}</a><br>
               ▸ Tag: <code>${{ github.ref_name }}</code><br>
-              ▸ Time: ${{ github.event.head_commit.timestamp }}
+              ▸ Time: ${{ github.event.head_commit.timestamp }}<br>
               ▸ Run: <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}">#${{github.run_id}}</a><br>
               
+              <hr style="border: 0; border-top: 1px solid #e1e4e8;">
+
+              🛠️ Investigate errors, apply fixes and retry with:<br>
+
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
+              
+              <code>bash<br>
+              # Remove existing tag locally<br>
+              git tag -d ${{ github.ref_name }}<br>
 
-              🛠️ Investigate errors, apply fixes and retry with:
+              # Recreate tag on current commit<br>
+              git tag ${{ github.ref_name }}<br>
 
-              <code>bash
-              # Remove existing tag locally
-              git tag -d ${{ github.ref_name }}
-
-              # Recreate tag on current commit
-              git tag ${{ github.ref_name }}
-
-              # Push to trigger workflow
+              # Push to trigger workflow<br>
               git push origin ${{ github.ref_name }}
               </code>
 

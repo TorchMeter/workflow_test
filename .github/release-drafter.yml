@@ -33,7 +33,7 @@ version-resolver:
   default: patch
 
 # release title
-name-template: 'TorchMeter v$RESOLVED_VERSION 🌈'
+name-template: 'TorchMeter v$RESOLVED_VERSION'
 
 # the format of tag to be linked by the release
 tag-template: 'v$RESOLVED_VERSION'
@@ -113,7 +113,7 @@ autolabeler:
   - label: breaking
     title:
       - '/^(break|breaking)/i'
-      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\: /i' # Example: feat!: ...
+      - '/^(depr|perf|feat|fix|doc|test|chore|maintain|refactor|revert)(\(.*\))?\!\s?\: /i' # Example: feat!: ...
 
   - label: deprecation
     title:
@@ -160,9 +160,9 @@ autolabeler:
 template: |
   $CHANGES
 
-  ## 🌟 Acknowledgements
-  > 🍻 Special thanks to all our contributors!
-  > 😊 Your contributions make `TorchMeter` better for everyone! 
+  ## 🍻 Acknowledgements
+  > 😊 Special thanks to all our contributors!
+  > 👏 Your contributions make `TorchMeter` better for everyone! 
 
   $CONTRIBUTORS
   
