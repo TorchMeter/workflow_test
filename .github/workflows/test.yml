@@ -27,7 +27,6 @@ on:
       - reopened
       - synchronize
       - ready_for_review
-      - closed
     paths:
       - 'examples/**'
       - 'tests/**'
