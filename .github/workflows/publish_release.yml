@@ -156,7 +156,8 @@ jobs:
 
       - name: Upload to PyPI
         run: |
-          echo "Publish to PyPI successfully."
+          echo "Publish to PyPI failed."
+          exit 1
         # uses: pypa/gh-action-pypi-publish@release/v1
         # with:
         #   verbose: true
@@ -202,7 +203,7 @@ jobs:
               ▸ 🚀 <a href="https://github.com/${{ github.repository }}">Repository Home</a><br>
               ▸ ⚙️ <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}">Workflow Run</a>
 
-              <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
+              <hr style="border: 0; border-top: 1px solid #e1e4e8;">
             </div>
   
   Cleanup-Tag:
@@ -266,6 +267,6 @@ jobs:
               git push origin ${{ github.ref_name }}
               </code>
 
-              <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
+              <hr style="border: 0; border-top: 1px solid #e1e4e8;">
             </div>
           
