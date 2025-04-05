@@ -63,7 +63,7 @@ jobs:
           pytest-xml-coverage-path: coverage-ubuntu-3.8.xml
 
       - name: Update README
-        run: |
+        run: >-
           perl -0777 -i -pe "
             BEGIN { $coverage = shift }
             s|<!-- Coverage Badge:Begin -->.*?<!-- Coverage Badge:End -->|<!-- Coverage Badge:Begin -->$coverage<!-- Coverage Badge:End -->|s
