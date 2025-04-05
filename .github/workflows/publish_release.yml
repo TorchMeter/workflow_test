@@ -108,6 +108,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: Build-Distribution-Packages
+    if: github.repository == 'TorchMeter/workflow_test'
 
     environment:
       name: testpypi
@@ -137,6 +138,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: Publish-TestPyPI
+    if: github.repository == 'TorchMeter/workflow_test'
 
     environment:
       name: pypi
@@ -166,6 +168,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: Publish-PyPI
+    if: github.repository == 'TorchMeter/workflow_test'
 
     permissions:
       contents: write
@@ -213,13 +216,13 @@ jobs:
     needs: 
       - Check-Tag
       - Build-Distribution-Packages
-      - Publish-PyPI
       - Publish-TestPyPI
+      - Publish-PyPI
       - Publish-Release
     if: >-
       github.repository == 'TorchMeter/workflow_test' &&
       (needs.Check-Tag.outputs.is_valid_tag == 'true') && 
-      (${{ failure() }} || ${{ cancelled() }})
+      (needs.Build-Distribution-Packages.result == 'failure' || needs.Publish-TestPyPI.result == 'failure' || needs.Publish-PyPI.result == 'failure' || needs.Publish-Release.result == 'failure')
 
     steps:
       - name: Fetch Code
