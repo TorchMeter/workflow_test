@@ -36,10 +36,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Checkout PR
-        uses: dawidd6/action-checkout-pr@v1.2.0
-        with:
-          pr: ${{ github.event.inputs.pr_number }}
+      # - name: Checkout PR
+      #   uses: dawidd6/action-checkout-pr@v1.2.0
+      #   with:
+      #     pr: ${{ github.event.inputs.pr_number }}
 
       - name: Download Test Report
         id: download-artifact
