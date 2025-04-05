@@ -20,10 +20,10 @@ on:
         description: 'Target PR Number'
         required: true
         type: number
-      run_id:
-        description: 'Id of the successful test workflow run'
+      coverage_badge_link:
+        description: 'Link of the coverage badge'
         required: true
-        type: number
+        type: string
 
 permissions:
   contents: write
@@ -42,45 +42,16 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-        
+
       - name: Checkout PR
         run: gh pr checkout ${{ github.event.inputs.pr_number }}
-
-      - name: Download Test Report
-        uses: dawidd6/action-download-artifact@v9
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          workflow: test.yml
-          workflow_search: false
-          workflow_conclusion: success
-          run_id: ${{ github.event.inputs.run_id }}
-          name: coverage-report-ubuntu-3.8
-          name_is_regexp: false
-          search_artifacts: true
-          if_no_artifact_found: fail
-          allow_forks: false
-
-      - name: Generate Coverage Badge Link
-        uses: MishaKav/pytest-coverage-comment@v1
-        id: coverage-badge-generate
-        with:
-          hide-comment: true
-          pytest-xml-coverage-path: coverage-ubuntu-3.8.xml
-
-      - name: Check Coverage Badge Link
-        run: |
-          if [[ -z "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" ]]; then
-            echo "❌ Coverage Badge Link not generated!" >&2
-            exit 1
-          fi
-          echo "Coverage Badge Link: ${{ steps.coverage-badge-generate.outputs.coverageHtml }}"
 
       - name: Update README
         run: |
           perl -0777 -i -pe '
             BEGIN { $coverage = shift }
             s|<!-- Coverage Badge:Begin -->.*?<!-- Coverage Badge:End -->|<!-- Coverage Badge:Begin -->$coverage<!-- Coverage Badge:End -->|sg
-          ' "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" README.md
+          ' "${{ github.event.inputs.coverage_badge_link }}" README.md
 
       - name: Commit & Push Changes
         run: |

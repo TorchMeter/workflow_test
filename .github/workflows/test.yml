@@ -184,18 +184,6 @@ jobs:
           retention-days: 7
           if-no-files-found: error
       
-      - name: Upload Coverage Report
-        if: >-
-          matrix.os == 'ubuntu-latest' &&
-          matrix.python-version == '3.8'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}
-          path: coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml
-          overwrite: true
-          retention-days: 7
-          if-no-files-found: error
-      
       - name: Pytest Coverage Comment
         if: >-
           matrix.python-version == '3.8' && 
