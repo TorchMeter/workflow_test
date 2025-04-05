@@ -1,6 +1,6 @@
 # TorchMeter
 
-Test inline badge: <!-- Coverage Badge:Begin --><!-- Coverage Badge:End -->
+Test inline badge: <!-- Coverage Badge:Begin -->https://img.shields.io/badge/Coverage-97%25-brightgreen.svg<!-- Coverage Badge:End -->
 
 Welcome to `Torchmeter` ⏲️ !!!
 
