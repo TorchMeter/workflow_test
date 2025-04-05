@@ -16,8 +16,8 @@ name: 🌟 Update README Badge 🔰
 on:
   workflow_dispatch:
     inputs:
-      pr_number:
-        description: 'Target PR Number'
+      run_id:
+        description: 'Id of the successful test workflow run'
         required: true
         type: number
 
@@ -42,15 +42,13 @@ jobs:
       #     pr: ${{ github.event.inputs.pr_number }}
 
       - name: Download Test Report
-        id: download-artifact
         uses: dawidd6/action-download-artifact@v9
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           workflow: test.yml
           workflow_search: false
           workflow_conclusion: success
-          pr: ${{ github.event.inputs.pr_number }}
-          event: pull_request
+          run_id: ${{ github.event.inputs.run_id }}
           name: coverage-report-ubuntu-3.8
           name_is_regexp: false
           search_artifacts: true
