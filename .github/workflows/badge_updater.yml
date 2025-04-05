@@ -40,6 +40,9 @@ jobs:
     if: github.repository == 'TorchMeter/workflow_test'
 
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        
       - name: Checkout PR
         run: gh pr checkout ${{ github.event.inputs.pr_number }}
 
