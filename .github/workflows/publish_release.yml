@@ -138,6 +138,7 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: Publish-TestPyPI
+    continue-on-error: true
     if: github.repository == 'TorchMeter/workflow_test'
 
     environment:
