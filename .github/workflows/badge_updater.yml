@@ -16,6 +16,10 @@ name: 🌟 Update README Badge 🔰
 on:
   workflow_dispatch:
     inputs:
+      pr_number:
+        description: 'Target PR Number'
+        required: true
+        type: number
       run_id:
         description: 'Id of the successful test workflow run'
         required: true
@@ -33,13 +37,8 @@ jobs:
     if: github.repository == 'TorchMeter/workflow_test'
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      # - name: Checkout PR
-      #   uses: dawidd6/action-checkout-pr@v1.2.0
-      #   with:
-      #     pr: ${{ github.event.inputs.pr_number }}
+      - name: Checkout PR
+        run: gh pr checkout ${{ github.event.inputs.pr_number }}
 
       - name: Download Test Report
         uses: dawidd6/action-download-artifact@v9
@@ -62,12 +61,20 @@ jobs:
           hide-comment: true
           pytest-xml-coverage-path: coverage-ubuntu-3.8.xml
 
+      - name: Check Coverage Badge Link
+        run: |
+          if [[ -z "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" ]]; then
+            echo "❌ Coverage Badge Link not generated!" >&2
+            exit 1
+          fi
+          echo "Coverage Badge Link: ${{ steps.coverage-badge-generate.outputs.coverageHtml }}"
+
       - name: Update README
-        run: >-
-          perl -0777 -i -pe "
+        run: |
+          perl -0777 -i -pe '
             BEGIN { $coverage = shift }
-            s|<!-- Coverage Badge:Begin -->.*?<!-- Coverage Badge:End -->|<!-- Coverage Badge:Begin -->$coverage<!-- Coverage Badge:End -->|s
-          " "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" README.md
+            s|<!-- Coverage Badge:Begin -->.*?<!-- Coverage Badge:End -->|<!-- Coverage Badge:Begin -->$coverage<!-- Coverage Badge:End -->|sg
+          ' "${{ steps.coverage-badge-generate.outputs.coverageHtml }}" README.md
 
       - name: Commit & Push Changes
         run: |
