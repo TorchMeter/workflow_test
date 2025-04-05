@@ -219,11 +219,10 @@ jobs:
       - Build-Distribution-Packages
       - Publish-TestPyPI
       - Publish-PyPI
-      - Publish-Release
     if: >-
       github.repository == 'TorchMeter/workflow_test' &&
       (needs.Check-Tag.outputs.is_valid_tag == 'true') && 
-      (needs.Build-Distribution-Packages.result == 'failure' || needs.Publish-TestPyPI.result == 'failure' || needs.Publish-PyPI.result == 'failure' || needs.Publish-Release.result == 'failure')
+      (needs.Build-Distribution-Packages.result == 'failure' || needs.Publish-TestPyPI.result == 'failure' || needs.Publish-PyPI.result == 'failure')
 
     steps:
       - name: Fetch Code
