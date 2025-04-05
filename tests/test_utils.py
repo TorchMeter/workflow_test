@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 import pytest
 import numpy as np
 import polars as pl
+from rich.text import Text
 from torch import rand as torch_rand
 from numpy.random import rand as np_rand
 
@@ -482,9 +483,9 @@ class TestMatchPolarsType:
             (set(), pl.Object),
             
             # ndarray
-            (np.array([1, 2, 3]), pl.Int64),          # 1D int
-            (np.array([1.1, 2.2]), pl.Float64),       # 1D float
-            (np.array([[1, 2], [3, 4]]), pl.Array(pl.Int64, 2)),  # 2D
+            (np.array([1, 2, 3], dtype=np.int64), pl.Int64),          # 1D int
+            (np.array([1.1, 2.2], dtype=np.float64), pl.Float64),       # 1D float
+            (np.array([[1, 2], [3, 4]], dtype=np.int64), pl.Array(pl.Int64, 2)),  # 2D
             (np.array([1, "a"], dtype=object), pl.Object), # structed ndarray
             
             # class instance
@@ -576,8 +577,9 @@ class TestTimer:
         mock_status["exit"].assert_called_once()
         
         captured = capsys.readouterr()
-        assert f"Finish {task} in" in captured.out
-        assert "seconds" in captured.out
+        plain_text = Text.from_ansi(captured.out).plain
+        assert f"Finish {task} in" in plain_text
+        assert "seconds" in plain_text
 
     # boundary condition test
     def test_short_time(self, capsys):

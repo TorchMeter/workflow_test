@@ -27,7 +27,6 @@ on:
       - reopened
       - synchronize
       - ready_for_review
-      - closed
     paths:
       - 'examples/**'
       - 'tests/**'
@@ -161,23 +160,17 @@ jobs:
       - name: Install Dependencies
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install ".[test]"
+          python3 -m pip install -e ".[test]"
 
       - name: Run Tests
         shell: bash
         run: |
           set -o pipefail
-          if [[ "${{ matrix.os }}" == *"windows"* ]]; then
-            pytest -q \
-            --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
-            --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
-            | Tee-Object -FilePath pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
-          else
-            pytest -q \
-            --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
-            --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
-            | tee pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
-          fi
+          
+          pytest -q \
+          --cov-report "xml:coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml" \
+          --junitxml=test-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml \
+          | tee pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
 
       - name: Upload Pytest Report
         if: always()
@@ -185,18 +178,6 @@ jobs:
         with:
           name: pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}
           path: pytest-output-${{ env.SHORT_OS }}-${{ matrix.python-version }}.log
-          overwrite: true
-          retention-days: 7
-          if-no-files-found: error
-      
-      - name: Upload Coverage Report
-        if: >-
-          matrix.os == 'ubuntu-latest' &&
-          matrix.python-version == '3.8'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report-${{ env.SHORT_OS }}-${{ matrix.python-version }}
-          path: coverage-${{ env.SHORT_OS }}-${{ matrix.python-version }}.xml
           overwrite: true
           retention-days: 7
           if-no-files-found: error
