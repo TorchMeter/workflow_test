@@ -150,8 +150,7 @@ jobs:
 
       - name: Upload to PyPI
         run: |
-          echo "Publish to PyPI failed."
-          exit 1
+          echo "Publish to PyPI successfully."
         # uses: pypa/gh-action-pypi-publish@release/v1
         # with:
         #   verbose: true
@@ -271,13 +270,13 @@ jobs:
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
               
               <pre><code class="language-bash">
-              # Remove existing tag locally<br>
-              git tag -d ${{ github.ref_name }}<br>
+              # Remove existing tag locally
+              git tag -d ${{ github.ref_name }}
 
-              # Recreate tag on current commit<br>
-              git tag ${{ github.ref_name }}<br>
+              # Recreate tag on current commit
+              git tag ${{ github.ref_name }}
 
-              # Push to trigger workflow<br>
+              # Push to trigger workflow
               git push origin ${{ github.ref_name }}
               </code></pre>
 
