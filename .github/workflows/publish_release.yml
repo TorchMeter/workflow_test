@@ -178,6 +178,8 @@ jobs:
           name: build-results
           path: dist/
 
+      - run: tree dist/
+
       - name: Draft GitHub Release
         uses: release-drafter/release-drafter@v6
         id: github-release
@@ -194,7 +196,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
-          FILES: dist/*.tar.gz dist/*.whl
+          FILES: dist/*
 
       - name: Email Notification
         uses: cinotify/github-action@v1.6.0
