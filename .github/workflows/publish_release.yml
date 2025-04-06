@@ -178,8 +178,6 @@ jobs:
           name: build-results
           path: dist/
 
-      - run: tree dist/
-
       - name: Draft GitHub Release
         uses: release-drafter/release-drafter@v6
         id: github-release
