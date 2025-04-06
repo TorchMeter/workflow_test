@@ -119,13 +119,12 @@ jobs:
           path: dist/
 
       - name: Upload to TestPyPI
-        run: echo "Publish to TestPyPI successfully."
-        # uses: pypa/gh-action-pypi-publish@release/v1
-        # with:
-        #   repository-url: https://test.pypi.org/legacy/
-        #   verbose: true
-        #   print-hash: true
-        #   skip-existing: true
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+          print-hash: true
+          skip-existing: true
 
   Publish-PyPI:
     name: 📤 Publish to PyPI
@@ -149,13 +148,11 @@ jobs:
           path: dist/
 
       - name: Upload to PyPI
-        run: |
-          echo "Publish to PyPI successfully."
-        # uses: pypa/gh-action-pypi-publish@release/v1
-        # with:
-        #   verbose: true
-        #   print-hash: true
-        #   skip-existing: true
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          print-hash: true
+          skip-existing: false
 
   Publish-Release: 
     name: 🗳 Create a Release
