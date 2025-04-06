@@ -5,30 +5,26 @@
 # This workflow ensures code quality and cross-platform compatibility. 
 #
 # Trigger Conditions:
-# - PR events (open/reopen/sync/review-ready) with changes to:
+# - PR events (open/review-ready) with changes to:
 #   - Source code (/torchmeter)
 #   - Test cases (/tests)
-#   - Examples (/examples)
 #   - Configuration files
 # - Manual trigger via GitHub UI
 #
 # Core functions:
-# 1. Automated Linting & Formatting - Enforce PEP8 standards via Ruff
+# 1. Automated Linting & Formatting via Ruff
 # 2. Multi-Environment Testing - Validate code across OS/Python versions
 # 3. Coverage Tracking - Generate test coverage report comments of different platforms
 # 4. CI/CD Integration - Block PR merges with failed checks
 
-name: ✅ TorchMeter Test ❌
+name: ✅ Compatibility Test ❌
 
 on:
   pull_request: 
     types:
       - opened
-      - reopened
-      - synchronize
       - ready_for_review
     paths:
-      - 'examples/**'
       - 'tests/**'
       - 'torchmeter/**'
       - 'default_cfg.yml'
@@ -48,7 +44,6 @@ jobs:
     name: 🕵️‍♂️ Lint and Format 📝
 
     runs-on: ubuntu-latest
-    if: github.event.action != 'closed' 
 
     steps:
       - name: Fetch Code
@@ -63,25 +58,24 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install ruff>=0.6.0
+          ruff version
 
       - name: Lint Code with Ruff
         run: |
+          set +e
           ruff check \
-            # --fix \
-            # --unsafe-fixes \
             --preview \
             --target-version=py38 \
             --output-format=grouped \
-            --output-file=ruff_lint_output.log
-
-          echo -e "\n📋 Linter Output:"
-          cat ruff_lint_output.log
+            --output-file=ruff_lint_output.log 
+          exit_code=$?
+          set -e
           
-          if [[ $? -eq 0 ]]; then
+          if [[ $exit_code -eq 0 ]]; then
             echo -e "\n✅ Linting passed! Code quality check successful! 🎉"
           else
             echo -e "\n❌ Linting failed! Some code does not meet the linting rules!" >&2
-            echo -e "\n💡 Detailed Report: artifacts/ruff-lint-output" >&2
+            echo -e "💡 Detailed Report: artifacts/ruff-lint-output" >&2
             exit 1
           fi
       
@@ -96,22 +90,22 @@ jobs:
           if-no-files-found: error
 
       - name: Format Code with Ruff
-        id: ruff-format
         run: |
           set -o pipefail
-
-          echo -e "\n📋 Formater Output:"
+          set +e
           ruff format \
             --diff \
             --preview \
-            --target-version=py38 | tee ruff_format_diff.log  
+            --target-version=py38 > ruff_format_diff.log 
+          exit_code=$?
           # ruff format --preview --target-version=py38
+          set -e
 
-          if [[ $? -eq 0 ]]; then
+          if [[ $exit_code -eq 0 ]]; then
             echo -e "\n✅ Formatting passed! All code is well-formated! 🎉"
           else
             echo -e "\n❌ Formatting failed! Some code does not meet the format requirements!" >&2
-            echo -e "\n💡 Detailed Report: artifacts/ruff-format-diff" >&2
+            echo -e "💡 Detailed Report: artifacts/ruff-format-diff" >&2
             exit 1
           fi
                 
@@ -154,8 +148,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: |
-            **/setup.cfg
-            **/requirements*.txt
+            setup.cfg
+            requirements.txt
 
       - name: Install Dependencies
         run: |
@@ -187,7 +181,6 @@ jobs:
           matrix.python-version == '3.8' && 
           github.event_name != 'workflow_dispatch'
         uses: MishaKav/pytest-coverage-comment@v1
-        id: coverage-comment
         with:
           title: Coverage Details on ${{ env.SHORT_OS }} under Python ${{ matrix.python-version }}
           badge-title: Coverage
