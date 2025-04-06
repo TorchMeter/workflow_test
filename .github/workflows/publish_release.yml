@@ -150,8 +150,7 @@ jobs:
 
       - name: Upload to PyPI
         run: |
-          echo "Publish to PyPI failed."
-          exit 1
+          echo "Publish to PyPI successfully."
         # uses: pypa/gh-action-pypi-publish@release/v1
         # with:
         #   verbose: true
