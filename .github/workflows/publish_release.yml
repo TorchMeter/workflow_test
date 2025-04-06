@@ -228,8 +228,16 @@ jobs:
       contents: write
       pull-requests: write
       
-    needs:  Check-Tag
-    if: github.repository == 'TorchMeter/workflow_test' && ${{ failure() }}
+    needs: 
+      - Check-Tag
+      - Build-Distribution-Packages
+      - Publish-TestPyPI
+      - Publish-PyPI
+      - Publish-Release
+    if: |
+      github.repository == 'TorchMeter/workflow_test' && 
+      failure() && 
+      needs.Check-Tag.result == 'success'
 
     steps:
       - name: Fetch Code
@@ -247,7 +255,7 @@ jobs:
           body: |
             <div style="font-family: monospace; color: #2f363d;">
 
-              🔴 <strong>Publish and Release <code>${{ github.ref_name }}</code> Failed</strong>
+              🔴 <strong>Publish <code>${{ github.ref_name }}</code> Failed</strong>
 
               <hr style="border: 0; border-top: 1px solid #e1e4e8;">
 
@@ -262,7 +270,7 @@ jobs:
 
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
               
-              <code>bash<br>
+              <pre><code class="language-bash">
               # Remove existing tag locally<br>
               git tag -d ${{ github.ref_name }}<br>
 
@@ -271,7 +279,7 @@ jobs:
 
               # Push to trigger workflow<br>
               git push origin ${{ github.ref_name }}
-              </code>
+              </code></pre>
 
               <hr style="border: 0; border-top: 1px solid #e1e4e8;">
             </div>
