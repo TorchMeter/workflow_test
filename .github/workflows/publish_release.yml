@@ -37,13 +37,10 @@ env:
 
 jobs:
   Check-Tag:
-    name: 🏷 Validate Tag is on Master
+    name: 🏷 Validate Tag
     runs-on: ubuntu-latest
 
     if: github.repository == 'TorchMeter/workflow_test'
-
-    outputs:
-      is_valid_tag: ${{ steps.check_tag.outputs.is_valid_tag }}
 
     steps:
       - name: Fetch Code
@@ -52,19 +49,16 @@ jobs:
           fetch-depth: 0
 
       - name: Check Tag is on Master
-        id: check_tag  
         run: |          
           TAG_COMMIT=$(git rev-parse ${{ github.ref_name }}^{commit})
           
           if ! git merge-base --is-ancestor $TAG_COMMIT origin/master; then
-            echo "❌ Error: Tag ${{ github.ref_name }} is not on master branch!"
-            echo "is_valid_tag=false" >> $GITHUB_OUTPUT 
+            echo "❌ Error: Tag ${{ github.ref_name }} is not on master branch!" >&2
             exit 1
           else
-            echo "✅ Tag ${{ github.ref_name }} is valid (points to master branch)."
-            echo "is_valid_tag=true" >> $GITHUB_OUTPUT
+            echo "✅ Tag ${{ github.ref_name }} points to master branch correctly."
           fi
-
+      
   Build-Distribution-Packages:
     name: 📦 Build Distributions
     runs-on: ubuntu-latest
@@ -138,7 +132,6 @@ jobs:
     runs-on: ubuntu-latest
 
     needs: Publish-TestPyPI
-    continue-on-error: true
     if: github.repository == 'TorchMeter/workflow_test'
 
     environment:
@@ -177,10 +170,30 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: release-drafter/release-drafter@v6
+      - name: Download Distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: build-results
+          path: dist/
+
+      - name: Draft GitHub Release
+        uses: release-drafter/release-drafter@v6
+        id: github-release
+        with:
+          name: TorchMeter ${{ github.ref_name }}
+          tag: ${{ github.ref_name }}
+          version: ${{ github.ref_name }}
+          disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Upload sdist to GitHub Release
+        run: gh release upload $TAG $FILES --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          FILES: dist/*.tar.gz dist/*.whl
+
       - name: Email Notification
         uses: cinotify/github-action@v1.6.0
         with:
@@ -196,7 +209,7 @@ jobs:
               ▸ 🕗 Time: ${{ github.event.head_commit.timestamp }}<br>
               ▸ 🏷️ Version: <code>${{ github.ref_name }}</code><br>
               ▸ 🎁 <a href="https://pypi.org/project/torchmeter/${{ github.ref_name }}/">PyPI Package</a><br>
-              ▸ 📦 <a href="https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}">Github Release</a>
+              ▸ 📦 <a href="${{ steps.github-release.outputs.html_url }}">Github Release</a>
 
               <hr style="border: 0; border-top: 1px dashed #e1e4e8;">
               
@@ -215,15 +228,8 @@ jobs:
       contents: write
       pull-requests: write
       
-    needs: 
-      - Check-Tag
-      - Build-Distribution-Packages
-      - Publish-TestPyPI
-      - Publish-PyPI
-    if: >-
-      github.repository == 'TorchMeter/workflow_test' &&
-      (needs.Check-Tag.outputs.is_valid_tag == 'true') && 
-      (needs.Build-Distribution-Packages.result == 'failure' || needs.Publish-TestPyPI.result == 'failure' || needs.Publish-PyPI.result == 'failure')
+    needs:  Check-Tag
+    if: github.repository == 'TorchMeter/workflow_test' && ${{ failure() }}
 
     steps:
       - name: Fetch Code
