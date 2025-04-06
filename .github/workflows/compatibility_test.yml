@@ -61,6 +61,7 @@ jobs:
           ruff version
 
       - name: Lint Code with Ruff
+        shell: bash
         run: |
           set +e
           ruff check \
@@ -90,6 +91,7 @@ jobs:
           if-no-files-found: error
 
       - name: Format Code with Ruff
+        shell: bash
         run: |
           set -o pipefail
           set +e
