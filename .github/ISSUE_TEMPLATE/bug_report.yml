@@ -77,7 +77,7 @@ body:
     attributes:
       label: Appendix
       description: |
-        Any addition information helping to resolve this issue is welcome.
+        Any addition information helping to resolve this issue is welcome. \
         You can include code snippets, error traces, screenshots/GIFs, or other relevant materials here.
       value: |
         <details>
