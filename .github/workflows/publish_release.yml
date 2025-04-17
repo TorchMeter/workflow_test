@@ -148,6 +148,9 @@ jobs:
       id-token: write
 
     steps:
+      - name: Fetch Code
+        uses: actions/checkout@v4
+        
       - name: Download Distributions
         uses: actions/download-artifact@v4
         with:
