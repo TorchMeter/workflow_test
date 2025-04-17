@@ -1,3 +1,4 @@
+import sys
 import warnings
 from collections import namedtuple
 from unittest.mock import MagicMock, PropertyMock, patch
@@ -5,6 +6,7 @@ from unittest.mock import MagicMock, PropertyMock, patch
 import pytest
 import numpy as np
 import torch.nn as nn
+from pympler.asizeof import asizeof
 from torch import ones as torch_ones
 from torch import randn as torch_randn
 from torch import device as torch_device
@@ -235,11 +237,11 @@ class TestParamsMeter:
         """Test detail_val_container and overview_val_container settings"""
         assert hasattr(ParamsMeter, "detail_val_container")
         dc = ParamsMeter.detail_val_container
-        assert all(v is None for v in dc._fields_defaults.values())
+        assert all(v is None for v in dc._field_defaults.values())
         
         assert hasattr(ParamsMeter, "overview_val_container")
         oc = ParamsMeter.overview_val_container
-        assert all(v is None for v in oc._fields_defaults.values())
+        assert all(v is None for v in oc._field_defaults.values())
     
     def test_valid_init(self, simple_model_root):
         """Test valid initialization"""
@@ -386,11 +388,11 @@ class TestCalMeter:
         """Test detail_val_container and overview_val_container settings"""
         assert hasattr(CalMeter, "detail_val_container")
         dc = CalMeter.detail_val_container
-        assert all(v is None for v in dc._fields_defaults.values())
+        assert all(v is None for v in dc._field_defaults.values())
         
         assert hasattr(CalMeter, "overview_val_container")
         oc = CalMeter.overview_val_container
-        assert all(v is None for v in oc._fields_defaults.values())
+        assert all(v is None for v in oc._field_defaults.values())
     
     def test_valid_init(self, simple_model_root):
         """Test valid initialization"""
@@ -727,11 +729,11 @@ class TestMemMeter:
         """Test detail_val_container and overview_val_container settings"""
         assert hasattr(MemMeter, "detail_val_container")
         dc = MemMeter.detail_val_container
-        assert all(v is None for v in dc._fields_defaults.values())
+        assert all(v is None for v in dc._field_defaults.values())
         
         assert hasattr(MemMeter, "overview_val_container")
         oc = MemMeter.overview_val_container
-        assert all(v is None for v in oc._fields_defaults.values())
+        assert all(v is None for v in oc._field_defaults.values())
     
     def test_valid_init(self, simple_model_root):
         """Test valid initialization"""
@@ -913,23 +915,25 @@ class TestMemMeter:
             (1, 32),  
             (1., 24), # python default size for float
 
-            ("1", 49 + 1),
-            ("-"*50, 49 + 50),
+            ("1", 1 + (49 if sys.version_info < (3, 12) else 41)),
+            ("-"*50, 50 + (49 if sys.version_info < (3, 12) else 41)),
 
             (None, 16), # python default size for None
 
             (tuple(), 0),
             ((1,2,3), 32*3),
-
-            (list(), 56),
-            ([1,2,3], 56 + 40*3),
+            
+            # value change between python version
+            (list(), asizeof([])),
+            ([1,2,3], asizeof([1,2,3])), 
 
             (set(), 216),
             ({1,2,3}, 216 + 32*3),
 
-            (dict(), 232),
-            ({"a":1, "b":2}, 232+(56+32)*2),
-            ({"a":1., "b":2.}, 232+(56+24)*2),
+            # hard to resolve the component
+            (dict(), asizeof(dict())), 
+            ({"a":1, "b":2}, asizeof({"a":1, "b":2})), 
+            ({"a":1., "b":2.}, asizeof({"a":1., "b":2.})),
 
             (np.array([1,2,3], dtype=np.int8), 1*3),
             (np.array([1,2,3], dtype=np.int16), 2*3),
@@ -967,17 +971,17 @@ class TestMemMeter:
         argnames=("opts", "expected_opt_cost"),
         argvalues=[
             ((1, 1.), 32 + 24), 
-            ((1, "1"), 32 + 50),
+            ((1, "1"), 32 + 1 + (49 if sys.version_info < (3, 12) else 41)),
             ((1, None), 32 + 16),  
             ((1, ()), 32 + 40),
             ((1, (1,2,3)), 32 + 40*4),
-            ((1, [1,2,3]), 32 + 56 + 40*3),
+            ((1, [1,2,3]), 32 + asizeof([1,2,3])),
             ((1, {1,2,3}), 32 + 216 + 32*3),
-            ((1, {"a":1, "b":2}), 32 + 232 + (56+32)*2),
+            ((1, {"a":1, "b":2}), 32 + asizeof({"a":1, "b":2})),
 
-            (("1", "2."), 50 + 51),
-            (("1", 2.), 50 + 24),
-            (("1", None), 50 + 16),
+            (("1", "2."), 3 + 2*(49 if sys.version_info < (3, 12) else 41)),
+            (("1", 2.), 1 + 24 + (49 if sys.version_info < (3, 12) else 41)),
+            (("1", None), 1 + 16 + (49 if sys.version_info < (3, 12) else 41)),
 
             ((None, None), 16 + 16),
             ((None, 2.), 16 + 24),
@@ -1168,11 +1172,11 @@ class TestIttpMeter:
         """Test detail_val_container and overview_val_container settings"""
         assert hasattr(IttpMeter, "detail_val_container")
         dc = MemMeter.detail_val_container
-        assert all(v is None for v in dc._fields_defaults.values())
+        assert all(v is None for v in dc._field_defaults.values())
         
         assert hasattr(IttpMeter, "overview_val_container")
         oc = MemMeter.overview_val_container
-        assert all(v is None for v in oc._fields_defaults.values())
+        assert all(v is None for v in oc._field_defaults.values())
     
     def test_valid_init(self, simple_model_root):
         """Test valid initialization"""
@@ -1251,6 +1255,7 @@ class TestIttpMeter:
         res = ittp_meter.measure(device=torch_device("cpu"))
         assert res is not None
 
+    @pytest.mark.skipif(not is_cuda(), reason="No GPUs detected")
     def test_model_device_dismatch(self):
         """Test whether the measure method works well 
            when model's device is the same with given argument"""

@@ -11,10 +11,10 @@ Torchmeter: An `all-in-one` tool for `Pytorch` model analysis, measuring:
 - Inference time
 - Throughput
 
-Project: https://github.com/Ahzyuan/torchmeter
+Project: https://github.com/TorchMeter/torchmeter
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.3-beta"
 
 from torchmeter.core import Meter
 from torchmeter.config import get_config

@@ -57,7 +57,7 @@ class Meter:
         
         3. **Rich visualization**  
             - Programmable tabular reports with real-time rendering 
-            - Hierarchical operation tree with smart folding of repeat blocks for model structure insights
+            - Hierarchical operation tree with smart folding of repeated blocks for model structure insights
 
         4. **Fine-Grained Customization**  
             - Real-time hot-reload rendering: Dynamic adjustment of rendering configuration for operation trees, 
@@ -1424,6 +1424,20 @@ class Meter:
             TypeError: If `stat_name` is not a string.
             KeyError: If `stat_name` is not found in the available statistics (i.e. `param`, `cal`, `mem`, `ittp`).
         
+        Notes:
+            default column names for each statistics:
+                - param: ("Operation_Id", "Operation_Name", "Operation_Type", 
+                          "Param_Name", "Requires_Grad", "Numeric_Num")
+                
+                - cal: ("Operation_Id", "Operation_Name", "Operation_Type", 
+                        "Kernel_Size", "Bias", "Input", "Output", "MACs", "FLOPs")
+                
+                - mem: ("Operation_Id", "Operation_Name", "Operation_Type", 
+                        "Param_Cost", "Buffer_Cost", "Output_Cost", "Total")
+                
+                - ittp: ("Operation_Id", "Operation_Name", "Operation_Type", 
+                         "Infer_Time", "Throughput")
+            
         Example:
             ```python
             from torchmeter import Meter
@@ -1582,7 +1596,8 @@ class Meter:
                 - `ittp`: Median inference time (seconds) and inferences per second per module
             
             8. Column management:
-                - Use `pick_cols` to reorder columns (validate column names via `table_cols(stat_name)`)
+                - Use `pick_cols` to reorder columns (validate column names via 
+                  `metered_instance.table_cols(stat_name)`)
                 - Processing order: `pick_cols` -> `exclude_cols` -> `custom_cols` -> `newcol`
                 - Conflicts: 
                     - picked columns override custom/newcol names
@@ -1595,7 +1610,7 @@ class Meter:
                   such as `Series`, `lists`, `ndarrays`, etc.). Note that you can use `val` property to access the 
                   raw data for all statistics (for `ittp`, the return will be a tuple made up of the median and iqr of 
                   the measurement data sequence).
-                - The example below demonstrates adding a percentage column of the `cal` statistics.Refer to 
+                - The example below demonstrates adding a percentage column of the `cal` statistics. Refer to 
                   https://docs.pola.rs/api/python/stable/reference/dataframe/index.html for using `polars.Dataframe`.
                     
             10. The `newcol_idx` parameter mostly follows Python list insertion semantics:
