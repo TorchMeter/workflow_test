@@ -14,7 +14,7 @@ Torchmeter: An `all-in-one` tool for `Pytorch` model analysis, measuring:
 Project: https://github.com/Ahzyuan/torchmeter
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.1-beta"
 
 from torchmeter.core import Meter
 from torchmeter.config import get_config
